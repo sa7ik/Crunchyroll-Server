@@ -2,6 +2,7 @@ require('dotenv').config()
 const express=require('express')
 const mongoose =require("mongoose")
 const userRoute=require('./Routes/userRoute')
+const adminRoute=require('./Routes/adminRoute')
 const cors=require("cors")
 const app=express()
 port=3001
@@ -11,6 +12,7 @@ app.use(cors({origin:"http://localhost:3000",credentials:true}))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use('/api',userRoute);
+app.use('/api',adminRoute);
 
 mongoose.connect(process.env.MONGO_URI)
 .then(()=>console.log("connected to database"))

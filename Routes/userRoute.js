@@ -1,28 +1,11 @@
 const express = require('express');
-// const signup = require("../Controller/Auth")
-const controller=require('../Controller/Auth')
+const controller=require('../Controller/userSide')
 const router = express()
 
-// Route for user signup
-router.post('/Signup', controller.signup);
-router.post('/Login',controller.login);
-
+router.post('/user/Signup', controller.signup);
+router.post('/user/Login',controller.login);
+router.post('/user/addToWatchList',controller.addToWatchList)
+router.get('/user/getWatchList/:userId',controller.getWatchList)
+router.delete('/user/deleteVideo/:userId/:videoId',controller.deleteVideoFromWatchList)
 
 module.exports = router;
-// const express=require('express')
-// const {signup}=require('../Controller/Auth')
-// const userRoutes=express.Router()
-
-// userRoutes.post('/Signup',signup);
-
-// // userRoutes.post('/Login',(req,res)=>{
-// //     res.send('signupRoute')
-// // })
-
-// // userRoutes.post('/Logout',(req,res)=>{
-// //     res.send("Logout Route")
-// // })
-
-// module.exports = userRoutes
-
-
