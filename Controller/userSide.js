@@ -5,10 +5,10 @@ const Video=require('../Model/Video');
 
 const signup = async (req, res) => {
     
-	try {
-        
+	try {                             
+		
 		const { username,email, password} = req.body;
-
+		
 		if (!email || !password || !username) {
 			return res.status(400).json({ success: false, message: "All fields are required" });
 		}
@@ -48,6 +48,8 @@ const signup = async (req, res) => {
 		});
 
         await newUser.save()
+		console.log('ftfy',newUser);
+		
 res.status(200).json(newUser)
 	} catch (error) {
 		console.log("Error in signup controller", error.message);
@@ -109,7 +111,7 @@ const addToWatchList = async (req, res) => {
     // Find or create a watchlist for the user
     let watchList = await WatchList.findOne({ user: userId });
     if (!watchList) {
-      watchList = new WatchList({ user: userId, Videos: [] });
+      watchList = new WatchListt({ user: userId, Videos: [] });
     }
 
     // Check if the video is already in the watchlist

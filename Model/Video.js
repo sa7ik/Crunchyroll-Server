@@ -4,6 +4,7 @@ const { Schema, model } = mongoose;
 const videoSchema = new Schema({
   description: { type: String, required: true },
   videoUrl: { type: String, required: true },
+  Image: { type: String },
   createdAt: { type: Date, default: Date.now },
   profil: { type: String },
   likes: [{ type: String }],

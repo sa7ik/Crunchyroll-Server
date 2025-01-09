@@ -1,43 +1,58 @@
-const cloudinary = require("cloudinary").v2; // Ensure you're using Cloudinary's v2 API
-const multer = require("multer");
-require("dotenv").config();
-const fs = require("fs");
+const multer = require('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('cloudinary').v2;
 
-// Configure Cloudinary
+// Cloudinary configuration
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
+        cloud_name: process.env.CLOUDINARY_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+         api_secret: process.env.CLOUDINARY_API_SECRET,
+     })
+
+// Define storage for video files
+const videoStorage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'media/videos',  // Cloudinary folder for videos
+        resource_type: 'video',  // Cloudinary resource type for videos
+        allowed_formats: ['mp4', 'mkv', 'avi'],  // Allowed video formats
+    },
 });
 
-// Multer upload configuration using memory storage (better for Cloudinary uploads)
-// const storage = multer.memoryStorage();
-// const upload = multer({ storage });
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "./Middleware/uploads"),
-  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
+// Define storage for image files
+const imageStorage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'media/images',  // Cloudinary folder for images
+        resource_type: 'image',  // Cloudinary resource type for images
+        allowed_formats: ['png', 'jpg', 'jpeg'],  // Allowed image formats
+    },
 });
-const upload = multer({ storage });
-module.exports = { upload };
 
+// Configure multer with Cloudinary storage for multiple fields (video and image)
+const upload = multer({
+    storage: new CloudinaryStorage({
+        cloudinary: cloudinary,
+        params: async (req, file) => {
+            if (file.fieldname === 'videoFile') {
+                return {
+                    folder: 'media/videos',
+                    resource_type: 'video',  // Cloudinary resource type for videos
+                    allowed_formats: ['mp4', 'mkv', 'avi'],
+                };
+            }
+            if (file.fieldname === 'imageFile') {
+                return {
+                    folder: 'media/images',
+                    resource_type: 'image',  // Cloudinary resource type for images
+                    allowed_formats: ['png', 'jpg', 'jpeg'],
+                };
+            }
+        },
+    }),
+}).fields([
+    { name: 'videoFile', maxCount: 1 },  // For video file
+    { name: 'imageFile', maxCount: 1 },  // For image file
+]);
 
-// Function to upload video to Cloudinary
-const uploadVideo = async (filePath) => {
-    try {
-        const result = await cloudinary.uploader.upload(filePath, {
-            resource_type: "video",
-        });
-
-        // Optionally delete the file from the local file system
-        fs.unlink(filePath, (err) => {
-            if (err) console.error("Error deleting file:", err);
-        });
-
-        return result; // Return the result of the upload
-    } catch (error) {
-        throw new Error("Error uploading video to Cloudinary: " + error.message);
-    }
-};
-
-module.exports = { cloudinary, upload, uploadVideo };
+module.exports = upload;

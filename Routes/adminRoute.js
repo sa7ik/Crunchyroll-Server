@@ -1,9 +1,9 @@
 const express = require('express');
-const adminController=require('../Controller/adminSide')
+const adminController=require('../Controller/adminSide');
+const upload = require('../Middleware/Cloudinary');
 const router = express.Router()
-const {upload}=require('../Middleware/Cloudinary')
 
-router.post('/admin/uploadVideo',upload.single("video"),adminController.uploadVideoToCloudinary)
+router.post('/admin/uploadVideo',upload,adminController.uploadController)
 router.get('/admin/getVideos',adminController.getEntairVideos)
 router.get('/admin/getVideoById/:videoId',adminController.getVideoById)
 router.put('/admin/updateVideo/:videoId',adminController.updateVideoById)
