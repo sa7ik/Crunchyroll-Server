@@ -8,6 +8,8 @@ const app=express()
 port=3001
 // import userRoute from './Routes/userRoute'
 app.use(express.json())
+
+
 app.use(express.urlencoded({ extended: true }));
 
 app.use(
@@ -19,6 +21,8 @@ app.use(
   );
   app.use('/api',userRoute);
   app.use('/api',adminRoute);
+  
+  
 
 mongoose.connect(process.env.MONGO_URI)
 .then(()=>console.log("connected to database"))
